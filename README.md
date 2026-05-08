@@ -1,10 +1,13 @@
+**********************************************************
 Sabse phele iss repository ko clone kro apne laptop pe.
 donwload python as all the things are written using python
-
+******************************************************************
 open the folder in the VS code in which you clone the repository.
 
-
+*******************************************************************************
 open the terminal(CMD) and run this command: "pip install -r requirements.txt"
+***************************************************************************************
+
  made a ".env"  file in your project folder,  and keep all api secret in that, without this the project will not work. The structure of .env file:
  # ===========================
 # KisanAI Environment Variables
@@ -39,7 +42,7 @@ SECRET_KEY=kisanai-secret-key-change-in-production-2024
 CORS_ORIGINS=http://localhost:8000,http://localhost:3000
 
 
-
+*********************************************************************************
 
 
 
@@ -47,6 +50,6 @@ CORS_ORIGINS=http://localhost:8000,http://localhost:3000
 then run this command: ".\start.bat"
 this will give a url of localhost copy that in browser.
 
-
+***********************************************************************************
 
 in the first run it will take some time os keep paitent.
