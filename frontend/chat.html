@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KisanAI — AI Chat</title>
+  <meta name="description" content="KisanAI Chat — Get real-time AI guidance on crop management, soil health, pest control, and more."/>
+  <link rel="stylesheet" href="/static/css/main.css"/>
+  <link rel="stylesheet" href="/static/css/chat.css"/>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌾</text></svg>"/>
+</head>
+<body>
+
+  <!-- ── Top Bar ─────────────────────────────────────── -->
+  <div class="chat-topbar">
+    <a href="/" class="chat-topbar-logo" style="text-decoration:none;">🌾 <span>Kisan</span>AI</a>
+    <div class="chat-topbar-title">AI Assistant</div>
+    <div class="topbar-actions">
+      <div class="lang-toggle">
+        <button class="lang-btn active" data-lang="english">EN</button>
+        <button class="lang-btn" data-lang="hindi">HI</button>
+      </div>
+      <a href="/dashboard" class="topbar-btn topbar-btn-outline">📊 Dashboard</a>
+    </div>
+  </div>
+
+  <div class="chat-layout">
+    <!-- ── Sidebar ─────────────────────────────────────── -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="chat-sidebar" id="chatSidebar">
+      <div class="sidebar-header">
+        <h4>Chats</h4>
+        <button class="new-chat-btn" id="newChatBtn">
+          <span>+</span> New Chat
+        </button>
+      </div>
+      <div class="chat-history" id="chatHistory">
+        <!-- Chat history items will be injected here -->
+      </div>
+      <div class="sidebar-topics">
+        <h4>Quick Topics</h4>
+        <div class="topic-chips">
+          <button class="topic-chip" data-topic="crop">🌱 Crop Mgmt</button>
+          <button class="topic-chip" data-topic="disease">🔬 Pest & Disease</button>
+          <button class="topic-chip" data-topic="fertilizer">🌿 Fertilizer</button>
+          <button class="topic-chip" data-topic="weather">🌤️ Weather</button>
+          <button class="topic-chip" data-topic="market">📊 Market Prices</button>
+          <button class="topic-chip" data-topic="organic">🍃 Organic Farming</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── Main Chat Area ──────────────────────────────── -->
+    <main class="chat-main">
+      <div class="chat-welcome" id="chatWelcome">
+        <div class="welcome-icon">🌾</div>
+        <h2>Welcome to KisanAI</h2>
+        <p>I'm your AI agricultural assistant. Ask me anything about farming, crops, diseases, or weather.</p>
+        <div class="quick-actions">
+          <div class="quick-action-card" data-action="crop">
+            <div class="qa-icon">🌱</div>
+            <div>
+              <div class="qa-title">Recommend a crop</div>
+              <div class="qa-desc">Based on soil & weather</div>
+            </div>
+          </div>
+          <div class="quick-action-card" data-action="disease">
+            <div class="qa-icon">🔬</div>
+            <div>
+              <div class="qa-title">Detect plant disease</div>
+              <div class="qa-desc">Upload a leaf photo</div>
+            </div>
+          </div>
+          <div class="quick-action-card" data-action="fertilizer">
+            <div class="qa-icon">🌿</div>
+            <div>
+              <div class="qa-title">Fertilizer advice</div>
+              <div class="qa-desc">Get NPK recommendations</div>
+            </div>
+          </div>
+          <div class="quick-action-card" data-action="market">
+            <div class="qa-icon">📊</div>
+            <div>
+              <div class="qa-title">Check Mandi prices</div>
+              <div class="qa-desc">Current crop rates</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-messages" id="chatMessages" style="display:none;">
+        <!-- Messages will appear here -->
+      </div>
+
+      <!-- ── Input Area ──────────────────────────────────── -->
+      <div class="chat-input-area">
+        <div class="image-preview-bar hidden" id="imagePreviewBar">
+          <img src="" alt="Preview" class="preview-thumb" id="previewThumb"/>
+          <div class="preview-name" id="previewName">image.jpg</div>
+          <button class="preview-remove" id="previewRemove" title="Remove image">×</button>
+        </div>
+        <div class="input-row">
+          <div class="input-actions-left">
+            <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" style="display:none;"/>
+            <button class="input-icon-btn" id="attachBtn" title="Upload plant image">📸</button>
+            <button class="input-icon-btn" id="voiceBtn" title="Speak your question">🎙️</button>
+          </div>
+          <textarea class="chat-textarea" id="chatInput" placeholder="Ask about crops, diseases, fertilizers..." rows="1"></textarea>
+          <button class="send-btn" id="sendBtn" title="Send message" disabled>↗</button>
+        </div>
+        <div class="input-hint">KisanAI can make mistakes. Consider verifying important information.</div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    // Simple script to handle UI interactions in the chat page
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatWelcome = document.getElementById('chatWelcome');
+    const langBtns = document.querySelectorAll('.lang-btn');
+    const topicChips = document.querySelectorAll('.topic-chip');
+    const quickActionCards = document.querySelectorAll('.quick-action-card');
+    const attachBtn = document.getElementById('attachBtn');
+    const fileInput = document.getElementById('fileInput');
+    const voiceBtn = document.getElementById('voiceBtn');
+    const imagePreviewBar = document.getElementById('imagePreviewBar');
+    const previewThumb = document.getElementById('previewThumb');
+    const previewName = document.getElementById('previewName');
+    const previewRemove = document.getElementById('previewRemove');
+    const newChatBtn = document.getElementById('newChatBtn');
+
+    let currentLang = 'english';
+    let chatHistory = [];
+    let isDetectingDisease = false;
+    let uploadedFile = null;
+
+    // Auto-resize textarea
+    chatInput.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
+      sendBtn.disabled = this.value.trim() === '' && !uploadedFile;
+    });
+
+    // Language toggle
+    langBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        langBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentLang = btn.dataset.lang;
+      });
+    });
+
+    // File Upload Handlers
+    attachBtn.addEventListener('click', () => fileInput.click());
+    
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        const file = e.target.files[0];
+        if (file.size > 10 * 1024 * 1024) {
+          alert('File is too large. Max size is 10MB.');
+          return;
+        }
+        uploadedFile = file;
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          previewThumb.src = e.target.result;
+          previewName.textContent = file.name;
+          imagePreviewBar.classList.remove('hidden');
+          chatInput.placeholder = "Add a description (optional)...";
+          sendBtn.disabled = false;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    previewRemove.addEventListener('click', () => {
+      uploadedFile = null;
+      fileInput.value = '';
+      imagePreviewBar.classList.add('hidden');
+      chatInput.placeholder = "Ask about crops, diseases, fertilizers...";
+      sendBtn.disabled = chatInput.value.trim() === '';
+    });
+
+    // Send Message Handlers
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        if (!sendBtn.disabled) handleSend();
+      }
+    });
+
+    sendBtn.addEventListener('click', handleSend);
+
+    function handleSend() {
+      const text = chatInput.value.trim();
+      if (!text && !uploadedFile) return;
+
+      chatWelcome.style.display = 'none';
+      chatMessages.style.display = 'flex';
+
+      // Reset input
+      chatInput.value = '';
+      chatInput.style.height = 'auto';
+      sendBtn.disabled = true;
+
+      // Handle Image Upload
+      if (uploadedFile) {
+        appendMessage(text || 'Uploaded an image', 'user', previewThumb.src);
+        
+        const formData = new FormData();
+        formData.append('file', uploadedFile);
+        if (text) formData.append('crop_name', text);
+
+        uploadedFile = null;
+        fileInput.value = '';
+        imagePreviewBar.classList.add('hidden');
+        chatInput.placeholder = "Ask about crops, diseases, fertilizers...";
+        
+        showTyping();
+        
+        fetch('/api/disease/detect', {
+          method: 'POST',
+          body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+          removeTyping();
+          if (data.success) {
+            let msg = `### 🔬 Disease Detection Result\n\n`;
+            msg += `**Crop:** ${data.detection.crop_name}\n`;
+            if (data.detection.is_healthy) {
+              msg += `**Status:** 🌱 Healthy (${data.detection.confidence_pct})\n\n`;
+            } else {
+              msg += `**Disease:** 🦠 ${data.detection.disease_name} (${data.detection.confidence_pct})\n\n`;
+            }
+            msg += `**Advice:**\n${data.ai_treatment_advice}`;
+            
+            appendMessage(msg, 'ai');
+          } else {
+            appendMessage(`❌ Error: ${data.detail || data.error || 'Failed to analyze image'}`, 'ai');
+          }
+        })
+        .catch(err => {
+          removeTyping();
+          appendMessage(`❌ Connection error. Please try again.`, 'ai');
+          console.error(err);
+        });
+        
+        return;
+      }
+
+      // Handle Text Message
+      appendMessage(text, 'user');
+      showTyping();
+
+      fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: text,
+          history: chatHistory,
+          language: currentLang
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        removeTyping();
+        if (data.success) {
+          appendMessage(data.message, 'ai');
+          // Add to history
+          chatHistory.push({ role: 'user', content: text });
+          chatHistory.push({ role: 'assistant', content: data.message });
+          // Keep only last 10 messages
+          if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+        } else {
+          appendMessage(`❌ Error: ${data.detail || data.message || 'Something went wrong'}`, 'ai');
+        }
+      })
+      .catch(err => {
+        removeTyping();
+        appendMessage(`❌ Connection error. Please try again.`, 'ai');
+        console.error(err);
+      });
+    }
+
+    function appendMessage(text, sender, imageUrl = null) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `message ${sender}`;
+      
+      const avatar = document.createElement('div');
+      avatar.className = `msg-avatar ${sender}`;
+      avatar.textContent = sender === 'ai' ? '🌾' : 'U';
+      
+      const bodyDiv = document.createElement('div');
+      bodyDiv.className = 'msg-body';
+      
+      const bubble = document.createElement('div');
+      bubble.className = 'msg-bubble';
+      
+      if (imageUrl) {
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        img.className = 'msg-image';
+        bubble.appendChild(img);
+      }
+      
+      if (text) {
+        if (sender === 'ai') {
+          bubble.innerHTML += marked.parse(text);
+        } else {
+          bubble.textContent += text;
+        }
+      }
+      
+      const meta = document.createElement('div');
+      meta.className = 'msg-meta';
+      meta.textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      
+      bodyDiv.appendChild(bubble);
+      bodyDiv.appendChild(meta);
+      
+      msgDiv.appendChild(avatar);
+      msgDiv.appendChild(bodyDiv);
+      
+      chatMessages.appendChild(msgDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function showTyping() {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `message ai typing-indicator`;
+      msgDiv.id = 'typingIndicator';
+      
+      const avatar = document.createElement('div');
+      avatar.className = `msg-avatar ai`;
+      avatar.textContent = '🌾';
+      
+      const bubble = document.createElement('div');
+      bubble.className = 'msg-bubble';
+      bubble.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+      
+      msgDiv.appendChild(avatar);
+      msgDiv.appendChild(bubble);
+      
+      chatMessages.appendChild(msgDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function removeTyping() {
+      const indicator = document.getElementById('typingIndicator');
+      if (indicator) indicator.remove();
+    }
+
+    // Quick Actions
+    topicChips.forEach(btn => {
+      btn.addEventListener('click', () => {
+        handleQuickAction(btn.dataset.topic);
+      });
+    });
+
+    quickActionCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const action = card.dataset.action;
+        if (action === 'disease') {
+          fileInput.click();
+        } else {
+          handleQuickAction(action);
+        }
+      });
+    });
+
+    function handleQuickAction(topic) {
+      chatWelcome.style.display = 'none';
+      chatMessages.style.display = 'flex';
+      
+      let topicText = topic.charAt(0).toUpperCase() + topic.slice(1);
+      appendMessage(`Tell me about ${topicText}`, 'user');
+      showTyping();
+      
+      fetch('/api/chat/quick-action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          topic: topic,
+          language: currentLang,
+          history: chatHistory
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        removeTyping();
+        if (data.success) {
+          appendMessage(data.message, 'ai');
+          chatHistory.push({ role: 'user', content: `Tell me about ${topic}` });
+          chatHistory.push({ role: 'assistant', content: data.message });
+        } else {
+          appendMessage(`❌ Error: ${data.detail || data.message || 'Something went wrong'}`, 'ai');
+        }
+      })
+      .catch(err => {
+        removeTyping();
+        appendMessage(`❌ Connection error. Please try again.`, 'ai');
+        console.error(err);
+      });
+    }
+
+    newChatBtn.addEventListener('click', () => {
+      chatHistory = [];
+      chatMessages.innerHTML = '';
+      chatMessages.style.display = 'none';
+      chatWelcome.style.display = 'flex';
+    });
+    
+    // Check if there's a hash in URL (e.g. #crop)
+    window.addEventListener('DOMContentLoaded', () => {
+      const hash = window.location.hash.substring(1);
+      if (hash && ['crop', 'soil', 'pest', 'weather', 'fertilizer', 'market', 'disease'].includes(hash)) {
+        if (hash === 'disease') {
+          fileInput.click();
+        } else {
+          handleQuickAction(hash);
+        }
+        // Remove hash without scrolling
+        history.replaceState(null, null, ' ');
+      }
+    });
+
+  </script>
+</body>
+</html>

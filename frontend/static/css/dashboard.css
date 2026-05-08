@@ -1,0 +1,118 @@
+/* ============================================
+   KisanAI - Dashboard Page CSS
+   ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --green-primary: #2D8653;
+  --green-dark: #1A5C38;
+  --green-light: #5DBB7A;
+  --green-pale: #E8F5ED;
+  --green-muted: #C8E6D4;
+  --bg-main: #F4F6F4;
+  --bg-white: #FFFFFF;
+  --text-dark: #1A2E1A;
+  --text-body: #3D4F3D;
+  --text-muted: #6B7F6B;
+  --border: #D4E8D4;
+  --shadow-sm: 0 2px 8px rgba(45,134,83,0.08);
+  --shadow-md: 0 4px 20px rgba(45,134,83,0.12);
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-main);
+  color: var(--text-body);
+  line-height: 1.6;
+}
+
+/* Navbar */
+.dash-navbar {
+  height: 70px;
+  background: var(--bg-white);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2rem;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+.dash-logo {
+  font-family: var(--font-serif);
+  font-size: 1.5rem; font-weight: 700;
+  color: var(--green-primary); text-decoration: none;
+}
+.dash-nav-links { display: flex; gap: 1.5rem; align-items: center; }
+.dash-nav-links a { text-decoration: none; color: var(--text-dark); font-weight: 500; transition: color var(--transition); }
+.dash-nav-links a:hover { color: var(--green-primary); }
+.dash-btn {
+  background: var(--green-dark); color: #fff; padding: 8px 16px; border-radius: 30px; font-weight: 600; text-decoration: none;
+  transition: all var(--transition); display: inline-block;
+}
+.dash-btn:hover { background: var(--green-primary); transform: translateY(-2px); }
+
+/* Main Layout */
+.dashboard-container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
+.dash-header { margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; }
+.dash-header h1 { font-family: var(--font-serif); font-size: 2.5rem; color: var(--text-dark); }
+.dash-header p { color: var(--text-muted); font-size: 1.1rem; }
+
+/* Grid Layout */
+.dash-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;
+}
+@media (max-width: 900px) { .dash-grid { grid-template-columns: 1fr; } }
+
+/* Cards */
+.card {
+  background: var(--bg-white); border-radius: var(--radius-md); padding: 1.5rem; border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm); transition: transform var(--transition);
+}
+.card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--green-muted); }
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; }
+.card-title { font-size: 1.25rem; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 8px; }
+
+/* Weather Section */
+.weather-main { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.weather-temp { font-size: 3rem; font-weight: 700; color: var(--text-dark); line-height: 1; }
+.weather-icon img { width: 80px; height: 80px; }
+.weather-desc { font-size: 1.1rem; color: var(--text-muted); text-transform: capitalize; }
+.weather-details { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+.w-detail { background: var(--green-pale); padding: 10px; border-radius: 8px; text-align: center; }
+.w-detail span { display: block; font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+.w-detail strong { font-size: 1.1rem; color: var(--green-dark); }
+.weather-advisory { margin-top: 1.5rem; padding: 1rem; border-radius: var(--radius-md); background: #f8f9fa; border-left: 4px solid var(--green-primary); }
+.advisory-item { margin-bottom: 0.5rem; font-size: 0.95rem; }
+.advisory-item:last-child { margin-bottom: 0; }
+.advisory-title { font-weight: 600; color: var(--text-dark); }
+.search-city { display: flex; gap: 10px; margin-bottom: 1.5rem; }
+.search-city input { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; outline: none; }
+.search-city button { padding: 10px 15px; background: var(--green-primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+
+/* Market Prices */
+.market-table { width: 100%; border-collapse: collapse; }
+.market-table th, .market-table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
+.market-table th { font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; }
+.trend-up { color: #d32f2f; font-weight: 600; } /* Price UP is usually red in Indian markets but let's use standard green for good, wait, higher crop price is good for farmer! */
+.trend-up { color: #2e7d32; font-weight: 600; } /* Green for farmer profit */
+.trend-down { color: #d32f2f; font-weight: 600; }
+.market-scroll { max-height: 400px; overflow-y: auto; }
+.market-scroll::-webkit-scrollbar { width: 6px; }
+.market-scroll::-webkit-scrollbar-thumb { background: var(--green-muted); border-radius: 3px; }
+
+/* Schemes */
+.scheme-list { display: grid; gap: 1rem; }
+.scheme-card { padding: 1rem; border: 1px solid var(--border); border-radius: 8px; transition: all 0.2s; cursor: pointer; }
+.scheme-card:hover { background: var(--green-pale); border-color: var(--green-primary); }
+.scheme-name { font-weight: 700; color: var(--green-dark); font-size: 1.1rem; }
+.scheme-full { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+.scheme-benefit { font-size: 0.95rem; color: var(--text-body); }
+
+/* Loader */
+.loader { border: 4px solid var(--green-pale); border-top: 4px solid var(--green-primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }

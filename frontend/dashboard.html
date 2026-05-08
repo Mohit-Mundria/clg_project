@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KisanAI — Farmer Dashboard</title>
+  <meta name="description" content="KisanAI Dashboard — Real-time weather, market prices, and government schemes for Indian farmers."/>
+  <link rel="stylesheet" href="/static/css/dashboard.css"/>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌾</text></svg>"/>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="dash-navbar">
+    <a href="/" class="dash-logo">🌾 <span>Kisan</span>AI</a>
+    <div class="dash-nav-links">
+      <a href="/chat">💬 AI Chat</a>
+      <a href="#weather">🌤️ Weather</a>
+      <a href="#market">📊 Market</a>
+      <a href="#schemes">🏛️ Schemes</a>
+    </div>
+  </nav>
+
+  <!-- Dashboard Content -->
+  <div class="dashboard-container">
+    <div class="dash-header">
+      <div>
+        <h1>Farmer Dashboard</h1>
+        <p>Real-time insights for smarter farming decisions.</p>
+      </div>
+      <div>
+        <span id="currentDate" style="color:var(--text-muted); font-weight:500;"></span>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+      <!-- Weather Card -->
+      <div class="card" id="weather">
+        <div class="card-header">
+          <div class="card-title">🌤️ Weather & Advisory</div>
+        </div>
+        <div class="search-city">
+          <input type="text" id="cityInput" placeholder="Enter your city (e.g., Delhi, Pune, Ludhiana)"/>
+          <button id="weatherBtn">Search</button>
+        </div>
+        <div id="weatherContent">
+          <div class="loader" id="weatherLoader"></div>
+        </div>
+      </div>
+
+      <!-- Market Prices Card -->
+      <div class="card" id="market">
+        <div class="card-header">
+          <div class="card-title">📊 Live Market Prices (Mandi)</div>
+          <span style="font-size:0.8rem; color:var(--text-muted);">Source: e-NAM (Simulated)</span>
+        </div>
+        <div class="market-scroll">
+          <table class="market-table">
+            <thead>
+              <tr>
+                <th>Crop</th>
+                <th>Price (₹/Qtl)</th>
+                <th>MSP</th>
+                <th>Trend</th>
+              </tr>
+            </thead>
+            <tbody id="marketBody">
+              <tr><td colspan="4"><div class="loader"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Schemes Card -->
+    <div class="card" id="schemes" style="margin-bottom: 2rem;">
+      <div class="card-header">
+        <div class="card-title">🏛️ Government Schemes & Subsidies</div>
+      </div>
+      <div class="scheme-list" id="schemesList">
+        <div class="loader"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+    // Fetch Weather
+    const weatherContent = document.getElementById('weatherContent');
+    const cityInput = document.getElementById('cityInput');
+    const weatherBtn = document.getElementById('weatherBtn');
+
+    function fetchWeather(city) {
+      weatherContent.innerHTML = '<div class="loader"></div>';
+      fetch(`/api/weather/${encodeURIComponent(city)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            let advisoryHtml = '';
+            if (data.advisory && data.advisory.length > 0) {
+              advisoryHtml = `<div class="weather-advisory">
+                <div style="font-weight:700; margin-bottom:8px;">AI Farming Advisory:</div>
+                ${data.advisory.map(a => `<div class="advisory-item">${a.icon} <span class="advisory-title">${a.title}:</span> ${a.message}</div>`).join('')}
+              </div>`;
+            }
+
+            weatherContent.innerHTML = `
+              <div style="margin-bottom:10px; color:var(--text-muted); font-weight:600;">
+                📍 ${data.city}, ${data.country} ${data.is_mock ? '<span style="color:#f39c12; font-size:0.8rem;">(Demo Data)</span>' : ''}
+              </div>
+              <div class="weather-main">
+                <div class="weather-icon"><img src="${data.icon_url}" alt="Weather Icon"/></div>
+                <div>
+                  <div class="weather-temp">${data.temperature}°C</div>
+                  <div class="weather-desc">${data.description} • Feels like ${data.feels_like}°C</div>
+                </div>
+              </div>
+              <div class="weather-details">
+                <div class="w-detail"><span>Humidity</span><strong>${data.humidity}%</strong></div>
+                <div class="w-detail"><span>Wind</span><strong>${data.wind_speed} km/h</strong></div>
+                <div class="w-detail"><span>Cloudiness</span><strong>${data.cloudiness}%</strong></div>
+                <div class="w-detail"><span>Rain (1h)</span><strong>${data.rainfall_1h} mm</strong></div>
+              </div>
+              ${advisoryHtml}
+            `;
+          } else {
+            weatherContent.innerHTML = `<div style="color:red; padding:1rem;">Error: ${data.error}</div>`;
+          }
+        })
+        .catch(err => {
+          weatherContent.innerHTML = `<div style="color:red; padding:1rem;">Failed to fetch weather data.</div>`;
+        });
+    }
+
+    // Default city
+    fetchWeather('New Delhi');
+
+    weatherBtn.addEventListener('click', () => {
+      if (cityInput.value.trim()) fetchWeather(cityInput.value.trim());
+    });
+    cityInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && cityInput.value.trim()) fetchWeather(cityInput.value.trim());
+    });
+
+    // Fetch Market Prices
+    const marketBody = document.getElementById('marketBody');
+    fetch('/api/market/prices')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          marketBody.innerHTML = data.prices.map(item => {
+            const trendClass = item.trend === 'up' ? 'trend-up' : item.trend === 'down' ? 'trend-down' : '';
+            const trendIcon = item.trend === 'up' ? '↑' : item.trend === 'down' ? '↓' : '-';
+            return `
+              <tr>
+                <td style="font-weight:600; color:var(--green-dark);">${item.crop}</td>
+                <td style="font-weight:700;">₹${item.market_price}</td>
+                <td style="color:var(--text-muted);">₹${item.msp > 0 ? item.msp : 'N/A'}</td>
+                <td class="${trendClass}">${trendIcon} ${item.change_pct > 0 ? '+' : ''}${item.change_pct}%</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      });
+
+    // Fetch Schemes
+    const schemesList = document.getElementById('schemesList');
+    fetch('/api/market/schemes')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          schemesList.innerHTML = data.schemes.map(s => `
+            <div class="scheme-card" onclick="window.open('https://${s.apply_at}', '_blank')">
+              <div style="display:flex; justify-content:space-between;">
+                <div class="scheme-name">${s.name}</div>
+                <div style="font-size:0.75rem; background:var(--green-pale); color:var(--green-dark); padding:2px 8px; border-radius:12px;">${s.category}</div>
+              </div>
+              <div class="scheme-full">${s.full_name}</div>
+              <div class="scheme-benefit"><strong>Benefit:</strong> ${s.benefit}</div>
+              <div style="font-size:0.8rem; color:var(--green-primary); margin-top:8px;">Apply at: ${s.apply_at} ↗</div>
+            </div>
+          `).join('');
+        }
+      });
+  </script>
+</body>
+</html>

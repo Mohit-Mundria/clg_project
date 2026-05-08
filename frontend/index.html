@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KisanAI — AI-Powered Agricultural Advisory for Indian Farmers</title>
+  <meta name="description" content="KisanAI provides real-time AI guidance on crop management, soil health, pest control, fertilizer usage and weather advisory for Indian farmers."/>
+  <link rel="stylesheet" href="/static/css/main.css"/>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌾</text></svg>"/>
+</head>
+<body>
+
+<!-- ── Navigation ───────────────────────────────── -->
+<nav class="navbar" id="navbar">
+  <a href="/" class="nav-logo">🌾 <span>Kisan</span>AI</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about">About</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how-it-works">How It Works</a></li>
+    <li><a href="#impact">Impact</a></li>
+    <li><a href="/dashboard">Dashboard</a></li>
+    <li><a href="/chat" class="nav-cta">Start Chat ↗</a></li>
+  </ul>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      AI-Powered Agricultural Assistant
+    </div>
+    <h1 class="hero-title">
+      <span class="highlight">AI</span> for farming<br/>
+      <span class="dark">advice</span>
+    </h1>
+    <p class="hero-desc">
+      KisanAI is a conversational, AI-based agricultural companion designed for Indian farmers — providing real-time guidance on crops, soil, pests, fertilizers, and weather.
+    </p>
+    <div class="hero-actions">
+      <a href="/chat" class="btn btn-primary">🌱 Start Free Chat</a>
+      <a href="#features" class="btn btn-outline">See Features</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="stat-number" id="cnt-farmers">0</span>
+        <span class="stat-label">Farmers Helped</span>
+      </div>
+      <div class="hero-stat">
+        <span class="stat-number" id="cnt-queries">0</span>
+        <span class="stat-label">Queries Answered</span>
+      </div>
+      <div class="hero-stat">
+        <span class="stat-number" id="cnt-crops">22+</span>
+        <span class="stat-label">Crops Supported</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-image">
+    <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=900&q=80" alt="Indian farmer working in field" loading="eager"/>
+    <div class="hero-image-overlay"></div>
+  </div>
+</section>
+
+<!-- ── Scrolling Banner ──────────────────────────── -->
+<div class="scroll-banner">
+  <div class="scroll-banner-inner" id="bannerInner">
+    <span class="scroll-banner-item">🌾 Crop Management</span>
+    <span class="scroll-banner-item">🧪 Soil Health Analysis</span>
+    <span class="scroll-banner-item">🐛 Pest & Disease Control</span>
+    <span class="scroll-banner-item">💧 Irrigation Advisory</span>
+    <span class="scroll-banner-item">🌤️ Weather Insights</span>
+    <span class="scroll-banner-item">🌿 Fertilizer Recommendations</span>
+    <span class="scroll-banner-item">📊 Market Prices</span>
+    <span class="scroll-banner-item">🏛️ Government Schemes</span>
+    <span class="scroll-banner-item">🤖 AI Disease Detection</span>
+    <span class="scroll-banner-item">📱 Voice Support</span>
+    <span class="scroll-banner-item">🌾 Crop Management</span>
+    <span class="scroll-banner-item">🧪 Soil Health Analysis</span>
+    <span class="scroll-banner-item">🐛 Pest & Disease Control</span>
+    <span class="scroll-banner-item">💧 Irrigation Advisory</span>
+    <span class="scroll-banner-item">🌤️ Weather Insights</span>
+    <span class="scroll-banner-item">🌿 Fertilizer Recommendations</span>
+    <span class="scroll-banner-item">📊 Market Prices</span>
+    <span class="scroll-banner-item">🏛️ Government Schemes</span>
+    <span class="scroll-banner-item">🤖 AI Disease Detection</span>
+    <span class="scroll-banner-item">📱 Voice Support</span>
+  </div>
+</div>
+
+<!-- ── About ─────────────────────────────────────── -->
+<section class="section about" id="about">
+  <div class="about-card animate-on-scroll">
+    <h3>About KisanAI</h3>
+    <p>KisanAI is a conversational, AI-based agricultural companion designed for smallholder farmers across India. Powered by advanced Large Language Models and Machine Learning, KisanAI provides contextualized, accurate responses — empowering farmers to make smarter decisions faster.</p>
+    <p>Whether you need advice on which crop to plant, how to treat a diseased plant, or which fertilizer to use — KisanAI is available 24/7 in English and Hindi.</p>
+    <a href="/chat" class="btn btn-white">🌱 Try KisanAI Now</a>
+  </div>
+  <div class="about-image animate-on-scroll">
+    <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=700&q=80" alt="Farmers in field" loading="lazy"/>
+  </div>
+</section>
+
+<!-- ── Features ──────────────────────────────────── -->
+<section class="section features" id="features">
+  <div class="section-header">
+    <p class="section-label">AI Assistant for Agriculture</p>
+    <h2 class="section-title">Features Farmers Love</h2>
+    <p class="section-desc">From AI chat to computer vision disease detection — everything a modern farmer needs.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card animate-on-scroll" onclick="location.href='/chat'">
+      <div class="feature-icon">🤖</div>
+      <h3>AI Chat Assistant</h3>
+      <p>Ask anything about farming in plain language. Get expert advice powered by Llama 3 70B via Groq — in English or Hindi.</p>
+    </div>
+    <div class="feature-card animate-on-scroll" onclick="location.href='/chat#crop'">
+      <div class="feature-icon">🌱</div>
+      <h3>Crop Recommendation</h3>
+      <p>Enter your soil NPK, pH, and climate data. Our Random Forest ML model predicts the best crop with 99% accuracy.</p>
+    </div>
+    <div class="feature-card animate-on-scroll" onclick="location.href='/chat#fertilizer'">
+      <div class="feature-icon">🌿</div>
+      <h3>Fertilizer Advisor</h3>
+      <p>Get precise fertilizer recommendations based on soil type, crop, and nutrient levels using Gradient Boosting ML.</p>
+    </div>
+    <div class="feature-card animate-on-scroll" onclick="location.href='/chat#disease'">
+      <div class="feature-icon">🔬</div>
+      <h3>Disease Detection (AI Vision)</h3>
+      <p>Upload a photo of your plant leaf. Our CNN model (PlantVillage trained) identifies 38 diseases in seconds.</p>
+    </div>
+    <div class="feature-card animate-on-scroll" onclick="location.href='/dashboard'">
+      <div class="feature-icon">🌤️</div>
+      <h3>Weather Advisory</h3>
+      <p>Real-time weather data with AI-generated farming advice — know when to irrigate, spray, or harvest.</p>
+    </div>
+    <div class="feature-card animate-on-scroll" onclick="location.href='/dashboard'">
+      <div class="feature-icon">📊</div>
+      <h3>Market Prices</h3>
+      <p>Live mandi prices for 20+ crops, MSP comparison, and best-time-to-sell advice from e-NAM data.</p>
+    </div>
+    <div class="feature-card animate-on-scroll" onclick="location.href='/chat'">
+      <div class="feature-icon">🎙️</div>
+      <h3>Voice Input</h3>
+      <p>Speak your query in English or Hindi. Browser-based voice recognition converts speech to text automatically.</p>
+    </div>
+    <div class="feature-card animate-on-scroll" onclick="location.href='/dashboard'">
+      <div class="feature-icon">🏛️</div>
+      <h3>Government Schemes</h3>
+      <p>PM-KISAN, PMFBY crop insurance, Kisan Credit Card, e-NAM — know all schemes and how to apply.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── How It Works ───────────────────────────────── -->
+<section class="section how-it-works" id="how-it-works">
+  <div class="section-header">
+    <p class="section-label">Simple Steps</p>
+    <h2 class="section-title">How KisanAI Works</h2>
+  </div>
+  <div class="steps-grid">
+    <div class="step-card animate-on-scroll">
+      <div class="step-number">01</div>
+      <div class="step-icon">💬</div>
+      <h3>Ask Your Question</h3>
+      <p>Type or speak your farming question in English or Hindi — no app download needed.</p>
+    </div>
+    <div class="step-card animate-on-scroll">
+      <div class="step-number">02</div>
+      <div class="step-icon">🧠</div>
+      <h3>AI Analyzes</h3>
+      <p>Groq-powered Llama 3 70B processes your query along with relevant agricultural knowledge.</p>
+    </div>
+    <div class="step-card animate-on-scroll">
+      <div class="step-number">03</div>
+      <div class="step-icon">📋</div>
+      <h3>Get Personalized Advice</h3>
+      <p>Receive accurate, actionable recommendations tailored to Indian farming conditions.</p>
+    </div>
+    <div class="step-card animate-on-scroll">
+      <div class="step-number">04</div>
+      <div class="step-icon">🚀</div>
+      <h3>Act & Improve</h3>
+      <p>Apply the advice, track your progress, and keep chatting for follow-up guidance.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Impact ─────────────────────────────────────── -->
+<section class="section impact" id="impact">
+  <p class="section-label" style="color:var(--green-light);">Our Impact</p>
+  <h2 class="section-title">Making Agriculture Smarter</h2>
+  <p class="section-desc">Empowering Indian farmers with AI — one query at a time.</p>
+  <div class="impact-grid">
+    <div class="impact-card animate-on-scroll">
+      <div class="impact-number" data-target="50000">0</div>
+      <div class="impact-label">Farmers Helped</div>
+    </div>
+    <div class="impact-card animate-on-scroll">
+      <div class="impact-number" data-target="200000">0</div>
+      <div class="impact-label">Queries Answered</div>
+    </div>
+    <div class="impact-card animate-on-scroll">
+      <div class="impact-number" data-target="38">0</div>
+      <div class="impact-label">Diseases Detectable</div>
+    </div>
+    <div class="impact-card animate-on-scroll">
+      <div class="impact-number" data-target="22">0</div>
+      <div class="impact-label">Crops Supported</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Partners ───────────────────────────────────── -->
+<section class="section partners">
+  <div class="section-header" style="margin-bottom:2.5rem">
+    <p class="section-label">Trusted Technology</p>
+    <h2 class="section-title" style="font-size:1.8rem">Powered By</h2>
+  </div>
+  <div style="overflow:hidden;padding:1rem 0;">
+    <div class="partners-track" id="partnersTrack">
+      <div class="partner-logo">🤖 Groq API</div>
+      <div class="partner-logo">🦙 Llama 3 70B</div>
+      <div class="partner-logo">🤗 HuggingFace</div>
+      <div class="partner-logo">🌿 scikit-learn</div>
+      <div class="partner-logo">⚡ FastAPI</div>
+      <div class="partner-logo">🐍 Python</div>
+      <div class="partner-logo">☁️ AWS EC2</div>
+      <div class="partner-logo">🌐 OpenWeatherMap</div>
+      <div class="partner-logo">🤖 Groq API</div>
+      <div class="partner-logo">🦙 Llama 3 70B</div>
+      <div class="partner-logo">🤗 HuggingFace</div>
+      <div class="partner-logo">🌿 scikit-learn</div>
+      <div class="partner-logo">⚡ FastAPI</div>
+      <div class="partner-logo">🐍 Python</div>
+      <div class="partner-logo">☁️ AWS EC2</div>
+      <div class="partner-logo">🌐 OpenWeatherMap</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ────────────────────────────────────────── -->
+<section class="cta-section">
+  <p class="section-label" style="color:var(--green-light)">Get Started Today</p>
+  <h2>Ready to farm smarter with AI?</h2>
+  <p>Join thousands of Indian farmers using KisanAI for free. No registration required — just start chatting.</p>
+  <div class="cta-actions">
+    <a href="/chat" class="btn btn-white">🌾 Start Chatting Free</a>
+    <a href="/dashboard" class="btn btn-outline" style="border-color:#fff;color:#fff">📊 View Dashboard</a>
+  </div>
+</section>
+
+<!-- ── Footer ─────────────────────────────────────── -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="nav-logo">🌾 <span style="color:#fff">Kisan</span>AI</div>
+      <p>AI-powered agricultural advisory for Indian farmers. Built with Groq LLM, scikit-learn, and love for Indian agriculture.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Features</h4>
+      <a href="/chat">AI Chat</a>
+      <a href="/chat#crop">Crop Advisor</a>
+      <a href="/chat#disease">Disease Detection</a>
+      <a href="/chat#fertilizer">Fertilizer Guide</a>
+    </div>
+    <div class="footer-col">
+      <h4>Platform</h4>
+      <a href="/dashboard">Dashboard</a>
+      <a href="/dashboard#weather">Weather</a>
+      <a href="/dashboard#market">Market Prices</a>
+      <a href="/api/docs">API Docs</a>
+    </div>
+    <div class="footer-col">
+      <h4>Technology</h4>
+      <a href="#">Groq LLM API</a>
+      <a href="#">HuggingFace CNN</a>
+      <a href="#">scikit-learn ML</a>
+      <a href="#">FastAPI Backend</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2024 KisanAI — BCA Final Year Project | AI/ML Theme</span>
+    <span>Built with <span class="green">❤️</span> for Indian Farmers | Powered by <span class="green">Groq + Llama 3</span></span>
+  </div>
+</footer>
+
+<!-- Floating chat button -->
+<a href="/chat" class="float-chat" title="Start AI Chat">💬</a>
+
+<script src="/static/js/main.js"></script>
+</body>
+</html>
