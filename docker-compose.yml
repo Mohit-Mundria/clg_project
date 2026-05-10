@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  kisanai:
+    build: .
+    container_name: kisanai_app
+    ports:
+      - "80:8000"
+    env_file:
+      - .env
+    restart: always
+    volumes:
+      - ./backend/models:/app/backend/models
