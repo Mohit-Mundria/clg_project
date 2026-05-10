@@ -17,9 +17,10 @@ class Settings(BaseSettings):
     app_env: str = Field(default="development", env="APP_ENV")
     secret_key: str = Field(default="change-me-in-production", env="SECRET_KEY")
 
-    # Groq LLM
+    # Groq & OpenAI LLM
     groq_api_key: str = Field(..., env="GROQ_API_KEY")
-    groq_model: str = Field(default="openai/gpt-oss-20b", env="GROQ_MODEL")
+    openai_api_key: str = Field(default="", env="OPENAI_API_KEY")
+    groq_model: str = Field(default="openai/gpt-oss-120b", env="GROQ_MODEL")
 
     # Weather
     weather_api_key: str = Field(default="e4d84587f15c4801a6c174344260405", env="WEATHER_API_KEY")

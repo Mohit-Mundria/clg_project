@@ -61,10 +61,10 @@ async def lifespan(app: FastAPI):
     else:
         logger.error("❌ GROQ_API_KEY is missing! Chat will not work.")
 
-    if settings.openweather_api_key:
-        logger.info("✅ OpenWeatherMap API key configured.")
+    if settings.weather_api_key:
+        logger.info("✅ WeatherAPI key configured.")
     else:
-        logger.warning("⚠️  OPENWEATHER_API_KEY not set — using mock weather data.")
+        logger.warning("⚠️  WEATHER_API_KEY not set — using mock weather data.")
 
     logger.info("🚀 KisanAI is ready at http://localhost:8000")
     yield
@@ -117,7 +117,7 @@ async def health_check():
         },
         "api_keys": {
             "groq": bool(settings.groq_api_key),
-            "openweather": bool(settings.openweather_api_key),
+            "weather": bool(settings.weather_api_key),
         }
     }
 

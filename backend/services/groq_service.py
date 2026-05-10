@@ -1,9 +1,11 @@
 """
 KisanAI - Groq LLM Service
 Handles all interactions with Groq API for agricultural advice
+Now using ChatOpenAI (OpenAI compatible) for enhanced model support
 """
-from groq import Groq
-from typing import Optional
+from typing import Optional, List
+from langchain_openai import ChatOpenAI
+from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from backend.config import get_settings
 
 settings = get_settings()
@@ -43,24 +45,27 @@ TOPIC_PROMPTS = {
 }
 
 
-def build_messages(
+def build_messages_langchain(
     user_message: str,
     conversation_history: list[dict],
     topic: Optional[str] = None,
-) -> list[dict]:
-    """Build the messages array for Groq API call."""
+) -> List:
+    """Build the messages array for LangChain ChatOpenAI call."""
     system_content = SYSTEM_PROMPT
     if topic and topic in TOPIC_PROMPTS:
         system_content += f"\n\n**Current Focus Area:**\n{TOPIC_PROMPTS[topic]}"
 
-    messages = [{"role": "system", "content": system_content}]
+    messages = [SystemMessage(content=system_content)]
 
-    # Add conversation history (last 10 messages)
-    if conversation_history:
-        messages.extend(conversation_history[-10:])
+    # Add conversation history
+    for msg in conversation_history[-10:]:
+        if msg["role"] == "user":
+            messages.append(HumanMessage(content=msg["content"]))
+        elif msg["role"] == "assistant":
+            messages.append(AIMessage(content=msg["content"]))
 
     # Add current message
-    messages.append({"role": "user", "content": user_message})
+    messages.append(HumanMessage(content=user_message))
     return messages
 
 
@@ -71,35 +76,37 @@ def get_groq_response(
     language: str = "english",
 ) -> dict:
     """
-    Get response from Groq LLM API.
-    Returns dict with response text and token usage.
+    Get response from LLM using ChatOpenAI (connecting to Groq).
     """
-    client = Groq(api_key=settings.groq_api_key)
+    # Use ChatOpenAI as requested by user
+    llm = ChatOpenAI(
+        openai_api_key=settings.openai_api_key or settings.groq_api_key,
+        base_url="https://api.groq.com/openai/v1",
+        model=settings.groq_model,
+        temperature=0.7,
+        max_tokens=1024,
+    )
 
     if conversation_history is None:
         conversation_history = []
 
-    # Add language instruction if Hindi
     if language == "hindi":
         user_message = f"[कृपया हिंदी में उत्तर दें]\n{user_message}"
 
-    messages = build_messages(user_message, conversation_history, topic)
+    messages = build_messages_langchain(user_message, conversation_history, topic)
 
     try:
-        response = client.chat.completions.create(
-            model=settings.groq_model,
-            messages=messages,
-            temperature=0.7,
-            max_tokens=1024,
-            top_p=0.9,
-        )
-
-        assistant_message = response.choices[0].message.content
+        response = llm.invoke(messages)
+        assistant_message = response.content
+        
+        # Note: LangChain usage metadata format varies, so we provide defaults
         usage = {
-            "prompt_tokens": response.usage.prompt_tokens,
-            "completion_tokens": response.usage.completion_tokens,
-            "total_tokens": response.usage.total_tokens,
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0,
         }
+        if hasattr(response, "response_metadata") and "token_usage" in response.response_metadata:
+            usage = response.response_metadata["token_usage"]
 
         return {
             "success": True,
@@ -118,8 +125,14 @@ def get_groq_response(
 
 
 def generate_disease_advice(disease_name: str, confidence: float, crop_name: str = "") -> str:
-    """Generate treatment advice for a detected plant disease using Groq."""
-    client = Groq(api_key=settings.groq_api_key)
+    """Generate treatment advice for a detected plant disease."""
+    llm = ChatOpenAI(
+        openai_api_key=settings.openai_api_key or settings.groq_api_key,
+        base_url="https://api.groq.com/openai/v1",
+        model=settings.groq_model,
+        temperature=0.5,
+        max_tokens=800,
+    )
 
     prompt = f"""A plant disease has been detected with AI image analysis:
 
@@ -137,23 +150,25 @@ Please provide:
 Keep the response practical and suitable for Indian farmers."""
 
     try:
-        response = client.chat.completions.create(
-            model=settings.groq_model,
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": prompt},
-            ],
-            temperature=0.5,
-            max_tokens=800,
-        )
-        return response.choices[0].message.content
+        messages = [
+            SystemMessage(content=SYSTEM_PROMPT),
+            HumanMessage(content=prompt)
+        ]
+        response = llm.invoke(messages)
+        return response.content
     except Exception as e:
         return f"Disease: {disease_name}. Please consult your local agricultural officer (KVK) for treatment advice."
 
 
 def generate_soil_advice(soil_data: dict) -> str:
     """Generate soil health advice based on soil test data."""
-    client = Groq(api_key=settings.groq_api_key)
+    llm = ChatOpenAI(
+        openai_api_key=settings.openai_api_key or settings.groq_api_key,
+        base_url="https://api.groq.com/openai/v1",
+        model=settings.groq_model,
+        temperature=0.5,
+        max_tokens=1000,
+    )
 
     prompt = f"""Based on the soil test results below, provide comprehensive soil health advice:
 
@@ -175,15 +190,11 @@ Please provide:
 5. Long-term soil improvement plan"""
 
     try:
-        response = client.chat.completions.create(
-            model=settings.groq_model,
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": prompt},
-            ],
-            temperature=0.5,
-            max_tokens=1000,
-        )
-        return response.choices[0].message.content
+        messages = [
+            SystemMessage(content=SYSTEM_PROMPT),
+            HumanMessage(content=prompt)
+        ]
+        response = llm.invoke(messages)
+        return response.content
     except Exception as e:
         return "Unable to generate soil advice. Please consult your local KVK."

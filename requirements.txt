@@ -23,6 +23,8 @@ numpy==1.26.4
 pandas==2.2.2
 scikit-learn==1.4.2
 joblib==1.4.2
+openai
+langchain-openai
 
 # AI/ML - Deep Learning (Plant Disease Detection)
 torch==2.3.0
